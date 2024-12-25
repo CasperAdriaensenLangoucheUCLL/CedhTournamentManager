@@ -75,7 +75,7 @@ const createNewRound = async({behaviour, name, numberOfTables:NT, ranked}: Round
                 players.reverse()
                 if (index == -1) {
                     byes.push(players[players.length - 1]);
-                    players = players.slice()
+                    players = players.slice(0,-1)
                 }
                 else {
                     byes.push(players[players.length - 1 - index]);
@@ -105,20 +105,40 @@ const createNewRound = async({behaviour, name, numberOfTables:NT, ranked}: Round
     }
 
     if (behaviour == "fill") {
+        let fourPlayerPeople = players
+        let threePlayerPeople: Player[] = []
+
         const remainder = players.length % 4
         let threePlayerTables = remainder?4-remainder:0
         const numberOfTables = (players.length - remainder)/4 + (remainder?1:0)
         let fourPlayerTables = numberOfTables - threePlayerTables
+
+        threePlayerTables = Math.max(Math.min(threePlayerTables, NT? NT - fourPlayerTables: threePlayerTables), 0)
+        for (let i = 0;i<threePlayerTables;i++){
+            for(let i = 0; i < 3;i++){
+                const index = fourPlayerPeople.reverse().findIndex(player => !player.tables.some(table => table.size == 3))
+                fourPlayerPeople.reverse()
+                if (index == -1) {
+                    threePlayerPeople.push(fourPlayerPeople[fourPlayerPeople.length - 1]);
+                    fourPlayerPeople = fourPlayerPeople.slice()
+                }
+                else {
+                    threePlayerPeople.push(fourPlayerPeople[fourPlayerPeople.length - 1 - index]);
+                    fourPlayerPeople = fourPlayerPeople.slice(0,fourPlayerPeople.length - 1 - index).concat(fourPlayerPeople.slice(fourPlayerPeople.length - index,));
+                }
+                
+            }
+        }
         
         const round = await roundDb.addRound(new Round({behaviour, name, numberOfTables, ranked}))
 
         for (let mkTable = 0; mkTable < fourPlayerTables && (NT?mkTable < NT:true); mkTable++) {
-            const tablePlayers = players.slice(mkTable*4, mkTable*4+4);
+            const tablePlayers = fourPlayerPeople.slice(mkTable*4, mkTable*4+4);
             const table = await tableDb.addTable(`table ${mkTable + 1}` ,round, tablePlayers)
         }
 
         for (let mkTable = 0; mkTable < threePlayerTables && (NT? fourPlayerTables + mkTable < NT:true); mkTable++) {
-            const tablePlayers = players.slice(fourPlayerTables*4 + mkTable*3, fourPlayerTables*4 + mkTable*3+3);
+            const tablePlayers = threePlayerPeople.slice(mkTable*3, mkTable*3+3);
             const table = await tableDb.addTable(`table ${mkTable+fourPlayerTables + 1}`, round, tablePlayers)
         }
     
