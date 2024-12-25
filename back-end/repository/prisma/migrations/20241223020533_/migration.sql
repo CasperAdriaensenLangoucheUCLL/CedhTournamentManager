@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Table" ADD COLUMN     "size" INTEGER NOT NULL DEFAULT 4;
