@@ -50,36 +50,59 @@ const createNewRound = async({behaviour, name, numberOfTables:NT, ranked}: Round
 		return (consistentlyRandomize(a).localeCompare(consistentlyRandomize(b)))
 	}
 
+    let players = (await playerService.getAllUnDroppedPlayers()).sort((a, b) => rankPlayers(a,b));
 
-    let players = (await playerService.getAllUnDroppedPlayers()).sort(() => Math.random() - 0.5);
-    if (ranked) players = players.sort((a, b) => rankPlayers(a,b));
+    if (!ranked) {
+        players = players.sort(() => Math.random() - 0.5);
+    }
 
     if (players == null) {
         throw new Error('no players found');
     }
     
     if (behaviour == "by") {
-    const numberOfTables = (players.length - (players.length%4))/4
-    const round = await roundDb.addRound(new Round({behaviour, name, numberOfTables, ranked}))
-    
-    const tables:Table[] = []
 
-    for (let mkTable = 0; mkTable < numberOfTables && (NT?mkTable < NT:true); mkTable++) {
-        const tablePlayers = players.slice(mkTable*4, mkTable*4+4);
-        const table = await tableDb.addTable(`table ${mkTable + 1}`, round, tablePlayers)
+        const numberOfTables = (players.length - (players.length%4))/4
+        const round = await roundDb.addRound(new Round({behaviour, name, numberOfTables, ranked}))
+        
+        const tables:Table[] = []
 
-        tables.push(table);
+        let byes:Player[] = []
+        if (!NT && numberOfTables*4 < players.length) {
+            const numberOfbyes = players.length - numberOfTables*4
+            for(let i = 0; i < numberOfbyes;i++){
+                const index = players.reverse().findIndex(player => player.byes == 0)
+                players.reverse()
+                if (index == -1) {
+                    byes.push(players[players.length - 1]);
+                    players = players.slice(-1)
+                }
+                else {
+                    byes.push(players[players.length - 1 - index]);
+                    players = players.slice(0,players.length - 1 - index).concat(players.slice(players.length - index,));
+                }
+                
+            }
+
+        }
+
+        for (let mkTable = 0; mkTable < numberOfTables && (NT?mkTable < NT:true); mkTable++) {
+            const tablePlayers = players.slice(mkTable*4, mkTable*4+4);
+            const table = await tableDb.addTable(`table ${mkTable + 1}`, round, tablePlayers)
+
+            tables.push(table);
+        }
+
+
+        if (byes) {
+            const byeTable = await tableDb.addTable("Byes", round, byes, -2)
+            byes.forEach(bye => playerDB.incrementPlayerByesById(bye.id))
+        }
+
+        
+
+        return getRoundById(round.id);
     }
-
-    if (!NT && numberOfTables*4 < players.length) {
-        const byes = players.slice(numberOfTables*4)
-
-        const byeTable = await tableDb.addTable("Byes", round, byes, -2)
-
-        byes.forEach(bye => playerDB.incrementPlayerByesById(bye.id))
-    }
-
-    return getRoundById(round.id);}
 
     if (behaviour == "fill") {
         const remainder = players.length % 4
@@ -114,7 +137,6 @@ const getRoundById = async (id:number): Promise<Round> => {
 const deleteRound = async (id:number):Promise<Round> => {
     const roundToDelete = await getRoundById(id)
     const allPlayers = await playerService.getAllPlayers()
-    console.log(roundToDelete)
     roundToDelete.tables.forEach(table => {
         if(table.winnerId == -2){
             allPlayers.filter(player => player.tables.some(tbl => tbl.id == table.id)).forEach(player => playerDB.decrementPlayerByesById(player.id))
