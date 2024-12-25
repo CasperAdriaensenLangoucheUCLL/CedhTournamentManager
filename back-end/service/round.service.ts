@@ -75,7 +75,7 @@ const createNewRound = async({behaviour, name, numberOfTables:NT, ranked}: Round
                 players.reverse()
                 if (index == -1) {
                     byes.push(players[players.length - 1]);
-                    players = players.slice(-1)
+                    players = players.slice()
                 }
                 else {
                     byes.push(players[players.length - 1 - index]);
