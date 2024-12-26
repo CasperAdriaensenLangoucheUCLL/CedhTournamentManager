@@ -40,7 +40,7 @@ const AddPLayerForm: React.FC = () => {
                     }}
                 >
                     <Typography component="h1" variant="h5">
-                        Create User
+                        Add player
                     </Typography>
 
                     <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
@@ -57,7 +57,7 @@ const AddPLayerForm: React.FC = () => {
                         />
                         <TextField
                             margin="normal"
-                            required
+                            // required
                             fullWidth
                             label={"Last name"}
                             type="text"
@@ -73,7 +73,7 @@ const AddPLayerForm: React.FC = () => {
                             color="primary"
                             sx={{ mt: 3, mb: 2 }}
                         >
-                            {"Add user"}
+                            {"Add"}
                         </Button>
                     </Box>
                     <Typography color='ForestGreen'>{status}</Typography>
