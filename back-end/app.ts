@@ -35,6 +35,8 @@ const corsOptions = {
 app.use(cors(corsOptions))
 app.use(bodyParser.json());
 
+app.options('*', cors(corsOptions)); // Handle preflight requests globally
+
 app.get('/status', (req, res) => {
     res.json({ message: 'Back-end is running...' });
 });
