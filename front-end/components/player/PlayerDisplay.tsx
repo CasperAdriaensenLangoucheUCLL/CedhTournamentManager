@@ -1,4 +1,4 @@
-import { Player } from "@/types";
+import { Player, Round } from "@/types";
 import { Box, IconButton, Paper, Popper, Stack, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2"
 import { FaCircleCheck, FaCircleXmark } from "react-icons/fa6";
@@ -12,10 +12,11 @@ import { useRouter } from "next/router";
 type Props = {
     player: Player;
     mmr: number;
+    allRounds: Round[];
 }
 
 
-const PlayerDisplay: React.FC<Props> = ({player, mmr}:Props) => { 
+const PlayerDisplay: React.FC<Props> = ({player, mmr, allRounds}:Props) => { 
     const [menuOpen, setMenuOpen] = useState(false)
     const [dropped, setDropped] = useState(player.dropped)
 
@@ -53,7 +54,7 @@ const PlayerDisplay: React.FC<Props> = ({player, mmr}:Props) => {
                             <Typography>losses: {player.losses}</Typography>
                         </Grid>
                         <Grid size={9}>
-                            <WinsNLosses player={player}/>
+                            <WinsNLosses player={player} allRounds={allRounds}/>
                         </Grid>
 
                         <Typography>Resistance: {((mmr*100).toFixed(1)) || 0}%</Typography>

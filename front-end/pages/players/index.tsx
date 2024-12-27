@@ -1,14 +1,16 @@
 import playerService from "@/service/playerService";
-import { Player } from "@/types";
+import { Player, Round } from "@/types";
 import { useEffect, useState } from "react";
 import Grid from "@mui/material/Grid2"
 import { Stack, Typography } from "@mui/material";
 import PlayerDisplay from "@/components/player/PlayerDisplay";
 import Header from "@/components/Header";
 import {Md5} from "ts-md5"
+import RoundService from "@/service/roundService";
 
 const home: React.FC = () => {
 	const [allPlayers, setAllPlayers] = useState<Player[]>([])
+	const [allRounds, setAllRounds] = useState<Round[]>([])
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
@@ -16,6 +18,10 @@ const home: React.FC = () => {
 			const playerResponse = await playerService.getAllPlayers()
 			const playerData = await (playerResponse.json()) as Player[]
 			setAllPlayers(playerData);
+
+			const roundResponse = await RoundService.getAllRounds()
+			const roundData = await (roundResponse.json()) as Round[]
+			setAllRounds(roundData)
 			setLoading(false)
 		}
 		fetchPlayer()
@@ -66,7 +72,7 @@ const home: React.FC = () => {
 	<>
 		<Stack>
 			{allPlayers.sort((a,b) => rankPlayers(a,b)).map(player => (
-				<PlayerDisplay player={player} mmr={MMR(player)}/>
+				<PlayerDisplay player={player} mmr={MMR(player)} allRounds={allRounds}/>
 			))}
 		</Stack>
 	</>
