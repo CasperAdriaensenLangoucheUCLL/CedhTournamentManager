@@ -82,4 +82,4 @@ app.listen(port || 3000, () => {
     console.log(`Back-end is running on port ${port}.`);
 });
 
-export {app}
+export default {app}

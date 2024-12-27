@@ -26,7 +26,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.app = void 0;
 const dotenv = __importStar(require("dotenv"));
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
@@ -38,7 +37,6 @@ const round_routes_1 = __importDefault(require("./controller/round.routes"));
 const table_routes_1 = __importDefault(require("./controller/table.routes"));
 // import { expressjwt } from 'express-jwt';
 const app = (0, express_1.default)();
-exports.app = app;
 dotenv.config();
 const port = process.env.APP_PORT || 3000;
 const corsOptions = {
@@ -97,3 +95,4 @@ app.use((err, req, res, next) => {
 app.listen(port || 3000, () => {
     console.log(`Back-end is running on port ${port}.`);
 });
+exports.default = { app };
