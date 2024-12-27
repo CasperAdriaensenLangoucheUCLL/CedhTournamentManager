@@ -12,17 +12,6 @@ type Props = {
 const WinsNLosses: React.FC<Props> = ({player, allRounds}:Props) => { 
     const [loading, setLoading] = useState(true);
 
-	useEffect(() => {
-		const fetchRounds = async () => {
-			const roundResponse = await RoundService.getAllRounds()
-			const roundData = await (roundResponse.json()) as Round[]
-			setLoading(false)
-		}
-		fetchRounds()
-	},[])
-
-    
-
 	const sortDates = (a:Round, b:Round) => {
         const parseTime = (date: string) => {
             let dateParts = date.split(/[-T:.Z]/);
