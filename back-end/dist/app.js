@@ -39,8 +39,25 @@ const table_routes_1 = __importDefault(require("./controller/table.routes"));
 const app = (0, express_1.default)();
 dotenv.config();
 const port = process.env.APP_PORT || 3000;
-app.use((0, cors_1.default)());
+const corsOptions = {
+    origin: '*',
+    methods: ['GET', 'OPTIONS', 'PATCH', 'DELETE', 'POST', 'PUT'],
+    allowedHeaders: [
+        'X-CSRF-Token',
+        'X-Requested-With',
+        'Accept',
+        'Accept-Version',
+        'Content-Length',
+        'Content-MD5',
+        'Content-Type',
+        'Date',
+        'X-Api-Version',
+    ],
+    credentials: true, // Allow credentials
+};
+app.use((0, cors_1.default)(corsOptions));
 app.use(bodyParser.json());
+app.options('*', (0, cors_1.default)(corsOptions)); // Handle preflight requests globally
 app.get('/status', (req, res) => {
     res.json({ message: 'Back-end is running...' });
 });
