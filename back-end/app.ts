@@ -15,7 +15,11 @@ const app = express();
 dotenv.config();
 const port = process.env.APP_PORT || 3000;
 
-app.use(cors());
+let corsOptions = {
+    origin : ['https://cedh-tournament-manager-b65r.vercel.app'],
+ }
+ 
+app.use(cors(corsOptions))
 app.use(bodyParser.json());
 
 app.get('/status', (req, res) => {
