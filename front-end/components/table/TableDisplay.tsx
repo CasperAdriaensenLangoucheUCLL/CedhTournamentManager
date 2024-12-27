@@ -1,4 +1,3 @@
-import playerService from "@/service/playerService";
 import tableService from "@/service/tableService";
 import { Player, Round, Table } from "@/types";
 import { Box, Button, Container, IconButton, Paper, Stack, Typography } from "@mui/material";
@@ -9,37 +8,38 @@ import { FaCircleXmark } from 'react-icons/fa6';
 type Props = {
     table: Table;
     round?: Round;
+    players: Player[]
 }
 
 
-const TableDisplay: React.FC<Props> = ({table, round}:Props) => {  
-    const [players, setPlayers] = useState<Player[]>([]);
+const TableDisplay: React.FC<Props> = ({table, round, players}:Props) => {  
+    // const [players, setPlayers] = useState<Player[]>([]);
     const [loading, setLoading] = useState(true);
     const [winner, setWinner] = useState<number|null>(table.winnerId);
 
     const [declareWinner, setDeclareWinner] = useState(false);
 
-    useEffect(() => {
-        const fetchRound = async () => {
-            if (!table.id) return
-            try {
-                setLoading(true);
-                const response = await playerService.getAllPlayersFromTable(table.id);
+    // useEffect(() => {
+    //     const fetchRound = async () => {
+    //         if (!table.id) return
+    //         try {
+    //             setLoading(true);
+    //             const response = await playerService.getAllPlayersFromTable(table.id);
 
-                if (!response.ok) {
-                    return;
-                }
+    //             if (!response.ok) {
+    //                 return;
+    //             }
 
-                const playersResopnse = (await response.json()) as Player[];
-                setPlayers(playersResopnse);
-            } catch (err) {
-            } finally {
-                setLoading(false);
-            }
-        };
+    //             const playersResopnse = (await response.json()) as Player[];
+    //             setPlayers(playersResopnse);
+    //         } catch (err) {
+    //         } finally {
+    //             setLoading(false);
+    //         }
+    //     };
 
-        fetchRound();
-    }, [table]);
+    //     fetchRound();
+    // }, [table]);
 
     const handleDraw = async () => {
         setWinner(-1)
