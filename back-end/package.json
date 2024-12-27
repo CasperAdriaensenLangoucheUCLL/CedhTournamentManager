@@ -1,13 +1,13 @@
 {
     "name": "back-end-team13",
     "version": "1.0.0",
-    "main": "dist/app.js",
+    "main": "dist/index.js",
     "prisma": {
         "schema": "repository/prisma/schema.prisma"
     },
     "scripts": {
         "test": "jest",
-        "start": "nodemon app.ts"
+        "start": "nodemon index.ts"
     },
     "keywords": [],
     "author": "",
