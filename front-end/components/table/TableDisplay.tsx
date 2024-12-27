@@ -14,7 +14,6 @@ type Props = {
 
 const TableDisplay: React.FC<Props> = ({table, round, players}:Props) => {  
     // const [players, setPlayers] = useState<Player[]>([]);
-    const [loading, setLoading] = useState(true);
     const [winner, setWinner] = useState<number|null>(table.winnerId);
 
     const [declareWinner, setDeclareWinner] = useState(false);
@@ -63,7 +62,7 @@ const TableDisplay: React.FC<Props> = ({table, round, players}:Props) => {
     }
     
     return(
-        (loading && table)?
+        (!table)?
         <>
         <Container component="main" sx={{width:800, padding:3}}>
             <Paper>
