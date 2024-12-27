@@ -15,9 +15,22 @@ const app = express();
 dotenv.config();
 const port = process.env.APP_PORT || 3000;
 
-let corsOptions = {
-    origin : ['https://cedh-tournament-manager-b65r.vercel.app'],
- }
+const corsOptions = {
+    origin: '*', // Allow all origins (be cautious in production)
+    methods: ['GET', 'OPTIONS', 'PATCH', 'DELETE', 'POST', 'PUT'], // Allowed HTTP methods
+    allowedHeaders: [
+      'X-CSRF-Token',
+      'X-Requested-With',
+      'Accept',
+      'Accept-Version',
+      'Content-Length',
+      'Content-MD5',
+      'Content-Type',
+      'Date',
+      'X-Api-Version',
+    ], // Allowed headers
+    credentials: true, // Allow credentials
+};
  
 app.use(cors(corsOptions))
 app.use(bodyParser.json());
