@@ -81,3 +81,5 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 app.listen(port || 3000, () => {
     console.log(`Back-end is running on port ${port}.`);
 });
+
+export {app}
