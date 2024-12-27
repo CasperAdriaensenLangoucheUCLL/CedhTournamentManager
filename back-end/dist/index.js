@@ -95,4 +95,4 @@ app.use((err, req, res, next) => {
 app.listen(port || 3000, () => {
     console.log(`Back-end is running on port ${port}.`);
 });
-exports.default = { app };
+exports.default = app;
