@@ -10,6 +10,7 @@ import playerService from "@/service/playerService";
 
 const roundDisplay: React.FC = () => {
     const [player, setPlayer] = useState<Player>()
+    const [allPlayers, setAllPlayers] = useState<Player[]>([]);
     const [loading, setLoading] = useState(true);
     const router = useRouter();
     const { playerId } = router.query;
@@ -36,6 +37,27 @@ const roundDisplay: React.FC = () => {
 
         fetchPlayer();
     }, [playerId]);
+
+    useEffect(() => {
+        const fetchRound = async () => {
+            try {
+                setLoading(true);
+                const response = await playerService.getAllPlayers();
+
+                if (!response.ok) {
+                    return;
+                }
+
+                const playersResopnse = (await response.json()) as Player[];
+                setAllPlayers(playersResopnse);
+            } catch (err) {
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchRound();
+    }, []);
 
 
     const [allRounds, setAllRounds] = useState<Round[]>([]);
@@ -107,7 +129,7 @@ const roundDisplay: React.FC = () => {
             {player?.tables.sort((a,b) => (a&&b)?sortDates(findRound(a),findRound(b)):0).map((table) => (
                 <Grid size={6}>
                     <Box onClick={() => router.push(`/rounds/${findRound(table).id}`)} sx={{ cursor: 'pointer'}}>
-                        <TableDisplay round={findRound(table)} table={table}/>
+                        <TableDisplay round={findRound(table)} table={table} players={allPlayers.filter(plr => plr.tables.some(tbl => tbl.id == table.id))}/>
                     </Box>
                     
                 </Grid>
